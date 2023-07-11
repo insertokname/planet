@@ -1,0 +1,41 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body, html{
+	overflow-x: hidden;
+	font-size: 2.2vw;
+}
+
+.spacer{
+	margin: 10px;
+	height: 200px; 
+	background-color: brown;
+}
+
+.planet-div{
+	display:block;
+	height: 500px;
+	background-color: #dddddd;
+}
+
+.webgl{
+	position: absolute;
+	z-index: 1;
+	right: 0px;
+}
+
+.title{
+	z-index: 2;
+	display: inline;
+	position: relative;
+	color:white;
+	font-family: "Poppins", sans-serif;
+	font-size: 3rem;
+	font-weight: bold;
+	left: 3%;
+	top: 20%;
+	transform: translate(-3%, -20%);
+}
