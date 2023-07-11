@@ -2,12 +2,51 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@v0.149.0/examples/jsm/loaders/GLTFLoader';
 //import gsap from 'gsap'
-//if it ain't broke dont uncomment this
+//if it isnt broken dont uncomment this
+
+
+function showDialogue(event) {
+	var container = document.querySelector('body');
+
+	// Remove any existing dialogue boxes
+	var existingDialogues = document.querySelectorAll('.dialog-box');
+	for (var i = 0; i < existingDialogues.length; i++) {
+		container.removeChild(existingDialogues[i]);
+	}
+
+	// Create the dialogue box element
+	var dialogueBox = document.createElement('div');
+	dialogueBox.className = 'dialog-box';
+	dialogueBox.innerHTML = 'Dialogue Box';
+	
+
+	// Create the close button element
+	var closeButton = document.createElement('span');
+	closeButton.className = 'close-button';
+	closeButton.innerHTML = 'x';
+
+	// Add an event listener to the close button
+	closeButton.addEventListener('click', function () {
+		container.removeChild(dialogueBox);
+	});
+
+	// Append the close button to the dialogue box
+	dialogueBox.appendChild(closeButton);
+
+	// Set the position of the dialogue box based on the mouse click
+	dialogueBox.style.left = event.clientX + 'px';
+	dialogueBox.style.top = event.clientY + 'px';
+	
+
+	// Append the dialogue box to the container
+	container.appendChild(dialogueBox);
+}
+
 
 let camera_dist = 20;
 
 var locations = [
-	[47.07123, 21.944729, "pers"],
+	[47.07123, 21.944729, "pers1"],
 	[61.863863, 15.038113, "pers2"],
 	[-21.782963, 125.265263, "pers3"]
 ]  
@@ -51,10 +90,9 @@ locations.forEach((elem) => {
 		color: '#cc66ff',
 		transparent: true,
 		opacity: 0.65,
-		person_attributes : elem[2],
-		has_person_attributes : true
 	});
-	 
+	dot_interaction_material.locations_index = locations.indexOf(elem);
+	
 	const dot_geometry = new THREE.SphereGeometry(dot_radius, 8, 8);
 	const dot_material = new THREE.MeshStandardMaterial({
 		color: '#cc66ff',
@@ -185,9 +223,27 @@ window.addEventListener('mousedown', event => {
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
 
-	if (intersects.length>0){
-		intersects[0].object.material.color.set(0xff0000);		
-		intersects[0].object.material.
+	let zoom_in_radius = radius * 1.8;
+	for (let i = 0; i < intersects.length; i++) {
+		if (intersects[i].object.material.locations_index !== undefined) {
+			let pers = locations[intersects[i].object.material.locations_index]
+			console.log(pers[2]);
+			showDialogue(event)
+			
+			let latitude = latitude_offset + elem[0]; 
+			let longitude = longitude_offset - elem[1]; 
+
+			let latRad = THREE.MathUtils.degToRad(latitude);
+			let lonRad = THREE.MathUtils.degToRad(longitude);
+
+			//todo get the curent lat rad and lon rad
+			let x = zoom_in_radius * Math.cos(latRad) * Math.cos(lonRad);
+			let y = zoom_in_radius * Math.sin(latRad);
+			let z = zoom_in_radius * Math.cos(latRad) * Math.sin(lonRad);
+
+
+			break;
+		}
 	}
 });
 
