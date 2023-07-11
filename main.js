@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@v0.149.0/examples/jsm/loaders/GLTFLoader';
 
-let camera_dist = 20;
+let camera_radius = 20;
 
 var locations = [
 	[47.07123, 21.944729, "pers1"],
@@ -34,7 +34,7 @@ scene.add(mesh);
 //loading each location on the planet surface
 
 let radius = 5.2;
-let dot_radius = 0.3;
+let dot_radius = 0.2;
 let dot_interaction_radius = 0.9;
 if (isMobileDevice()) {
 	dot_interaction_radius *= 1.3;
@@ -48,7 +48,7 @@ locations.forEach((elem) => {
 	const dot_interaction_material = new THREE.MeshStandardMaterial({
 		color: '#cc66ff',
 		transparent: true,
-		opacity: 0.65,
+		opacity: 0,
 	});
 	dot_interaction_material.locations_index = locations.indexOf(elem);
 	
@@ -114,7 +114,7 @@ scene.add(new THREE.PointLightHelper(HemiLight))
 
 //Camera - neither this
 const camera = new THREE.PerspectiveCamera(45, sizes.width/ sizes.heigth);
-camera.position.z = camera_dist;
+camera.position.z = camera_radius;
 scene.add(camera);
 
 
@@ -137,15 +137,31 @@ controls.enableZoom = false;
 controls.autoRotate = true;
 //fuck this
 controls.autoRotateSpeed = isMobileDevice() ? 2 : 1;
-var camera_pos_before_animation = camera.position; 
 
+
+let zoom_in_radius_magnitude = 2;
+let focused_obj = "";
+let zoom_in_duration = 0.8;
+let zoom_out_duration = 0.5;
+
+//makes a dialogue box
 function showDialogue(event) {
 	var container = document.querySelector('body');
 
 	var remove_dialogue = (dialogue) => {
 		container.removeChild(dialogue);
 		controls.autoRotate = true;
-		console.log("pepe");
+		focused_obj = "";
+
+		let temp_camera_pos = new THREE.Vector3(
+			camera.position.x,
+			camera.position.y,
+			camera.position.z
+		)
+		temp_camera_pos.normalize()
+		gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
+		, { x: temp_camera_pos.x * camera_radius, y: temp_camera_pos.y * camera_radius, z: temp_camera_pos.z * camera_radius, duration: zoom_out_duration })
+
 	};
 
 	// Remove any existing dialogue boxes
@@ -228,7 +244,6 @@ const pointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 
 
-
 window.addEventListener('mousedown', event => {
 	//calc pointer pos in device cords ✨magie✨
     const rect = renderer.domElement.getBoundingClientRect();
@@ -238,85 +253,24 @@ window.addEventListener('mousedown', event => {
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
 
-	let zoom_in_radius_magnitude = 1.5;
 	for (let i = 0; i < intersects.length; i++) {
 		if (intersects[i].object.material.locations_index !== undefined) {
-			showDialogue(event)
-			
 			let elem = locations[intersects[i].object.material.locations_index]
-			console.log(elem[2]);
-			controls.autoRotate = false;
-/*
-			let latitude = latitude_offset + elem[0]; 
-			let longitude = longitude_offset - elem[1]; 
+			if (elem[2] != focused_obj) {
+				focused_obj = elem[2];
+				showDialogue(event)
+				controls.autoRotate = false;
 
-			let latRad = THREE.MathUtils.degToRad(latitude);
-			let lonRad = THREE.MathUtils.degToRad(longitude);
-
-			//todo get the curent lat rad and lon rad
-			let x = zoom_in_radius * Math.cos(latRad) * Math.cos(lonRad);
-			let y = zoom_in_radius * Math.sin(latRad);
-			let z = zoom_in_radius * Math.cos(latRad) * Math.sin(lonRad);
-*/
-
-			camera_pos_before_animation = camera.position;
-			let position = intersects[i].object.position; 
-
-			const origCameraQuat = camera.quaternion;
-			const targetPosition = new THREE.Vector3
-				(
-					position.x * zoom_in_radius_magnitude,
-					position.y * zoom_in_radius_magnitude,
-					position.z * zoom_in_radius_magnitude
-			);
+				const targetPosition = new THREE.Vector3
+				(intersects[i].object.position.x * zoom_in_radius_magnitude,
+				intersects[i].object.position.y * zoom_in_radius_magnitude,
+				intersects[i].object.position.z * zoom_in_radius_magnitude);
+		
+				gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
+				, { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z, duration: zoom_in_duration })
 				
-			gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
-				, { x: targetPosition.x, y:targetPosition.y, z:targetPosition.z, duration: 1.5 })
-			
-			//fromTo(mesh.scale, {z:0, x:0, y:0}, {z:1,x:1,y:1})
-
-			//camera.quaternion.slerpQuaternions(targetPosition, cameraPosition, 1);
-			
-			/*
-			// Step 2: Calculate direction vector	
-			const direction = new THREE.Vector3().subVectors(targetPosition, cameraPosition).normalize();
-
-			// Step 3: Define camera's up direction
-			const up = new THREE.Vector3(0, 1, 0);
-			*/
-
-			/*
-			var quaternion = new THREE.Quaternion().setFromUnitVectors(up, direction);
-			var matrix = new THREE.Matrix4().makeRotationFromQuaternion(quaternion);
-			var euler = new THREE.Euler().setFromRotationMatrix(matrix);
-			console.log(camera.quaternion);
-			camera.;
-			*/
-
-
-					/*
-			// Step 4: Calculate right vector
-			const right = new THREE.Vector3().crossVectors(up, direction).normalize();
-
-			// Step 5: Calculate final up vector
-			const finalUp = new THREE.Vector3().crossVectors(direction, right).normalize();
-
-			// Step 6: Create matrix using direction, right, and finalUp vectors
-			const matrix = new THREE.Matrix4().set(
-			  right.x, right.y, right.z, 0,
-			  finalUp.x, finalUp.y, finalUp.z, 0,
-			  -direction.x, -direction.y, -direction.z, 0,
-			  0, 0, 0, 1
-			);
-			
-			
-			// Step 7: Set camera's rotation using the matrix
-			console.log(camera.quaternion)
-			camera.quaternion.setFromRotationMatrix(matrix);
-			camera.quaternion.normalize;*/
-
-
 			break;
+			}
 		}
 	}
 });

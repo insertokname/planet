@@ -228,7 +228,7 @@
           0.04057749733328819, 0.8162760734558105, 0.11648337543010712, 1
         ],
         "metallicFactor": 0,
-        "roughnessFactor": 0.5
+        "roughnessFactor": 0.25
       },
       "emissiveFactor": [0, 0, 0],
       "alphaMode": "OPAQUE",
