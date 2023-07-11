@@ -6,7 +6,27 @@
 
 body, html{
 	overflow-x: hidden;
-	font-size: 2.2vw;
+	font-size: 16px;
+}
+
+/* Media query for screens up to 600px wide */
+@media screen and (max-width: 600px) {
+	body, html {		font-size: 16px;
+	}
+}
+
+/* Media query for screens between 601px and 1200px wide */
+@media screen and (min-width: 601px) and (max-width: 1200px) {
+	body,html {
+		font-size: 20px;
+	}
+}
+
+/* Media query for screens larger than 1200px wide */
+@media screen and (min-width: 1201px) {
+	body, html {
+		font-size: 18px;
+	}
 }
 
 .spacer{
@@ -38,4 +58,21 @@ body, html{
 	left: 3%;
 	top: 20%;
 	transform: translate(-3%, -20%);
+}
+
+.dialog-box {
+	position: absolute;
+	background-color: white;
+	padding: 10px;
+	border: 1px solid black;
+	z-index: 3;
+	font-size: 1.1rem;
+}
+
+.close-button {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	cursor: pointer;
+	font-size: 1rem;
 }
