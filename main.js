@@ -256,21 +256,19 @@ window.addEventListener('mousedown', event => {
 	for (let i = 0; i < intersects.length; i++) {
 		if (intersects[i].object.material.locations_index !== undefined) {
 			let elem = locations[intersects[i].object.material.locations_index]
-			if (elem[2] != focused_obj) {
-				focused_obj = elem[2];
-				showDialogue(event)
-				controls.autoRotate = false;
+			focused_obj = elem[2];
+			showDialogue(event)
+			controls.autoRotate = false;
 
-				const targetPosition = new THREE.Vector3
-				(intersects[i].object.position.x * zoom_in_radius_magnitude,
-				intersects[i].object.position.y * zoom_in_radius_magnitude,
-				intersects[i].object.position.z * zoom_in_radius_magnitude);
-		
-				gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
-				, { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z, duration: zoom_in_duration })
-				
+			const targetPosition = new THREE.Vector3
+			(intersects[i].object.position.x * zoom_in_radius_magnitude,
+			intersects[i].object.position.y * zoom_in_radius_magnitude,
+			intersects[i].object.position.z * zoom_in_radius_magnitude);
+	
+			gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
+			, { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z, duration: zoom_in_duration })
+			
 			break;
-			}
 		}
 	}
 });
