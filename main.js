@@ -145,7 +145,7 @@ let zoom_in_duration = 0.8;
 let zoom_out_duration = 0.5;
 
 //makes a dialogue box
-function showDialogue(event) {
+function showDialogue(event, name) {
 	var container = document.querySelector('body');
 
 	var remove_dialogue = (dialogue) => {
@@ -161,7 +161,6 @@ function showDialogue(event) {
 		temp_camera_pos.normalize()
 		gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
 		, { x: temp_camera_pos.x * camera_radius, y: temp_camera_pos.y * camera_radius, z: temp_camera_pos.z * camera_radius, duration: zoom_out_duration })
-
 	};
 
 	// Remove any existing dialogue boxes
@@ -173,7 +172,7 @@ function showDialogue(event) {
 	// Create the dialogue box element
 	var dialogueBox = document.createElement('div');
 	dialogueBox.className = 'dialog-box';
-	dialogueBox.innerHTML = 'Dialogue Box';
+	dialogueBox.innerHTML = name;
 	
 
 	// Create the close button element
@@ -257,7 +256,7 @@ window.addEventListener('mousedown', event => {
 		if (intersects[i].object.material.locations_index !== undefined) {
 			let elem = locations[intersects[i].object.material.locations_index]
 			focused_obj = elem[2];
-			showDialogue(event)
+			showDialogue(event, elem[2]);
 			controls.autoRotate = false;
 
 			const targetPosition = new THREE.Vector3
@@ -267,7 +266,6 @@ window.addEventListener('mousedown', event => {
 	
 			gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
 			, { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z, duration: zoom_in_duration })
-			
 			break;
 		}
 	}
