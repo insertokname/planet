@@ -127,6 +127,8 @@ renderer.render(scene, camera);
 renderer.setPixelRatio(1);
 renderer.toneMapping = THREE.ReinhardToneMapping
 renderer.toneMappingExposure = 3.3;
+renderer.gammaOutput = true;
+renderer.gammaFactor = 2.2;
 
 
 //Camera controls
@@ -142,8 +144,8 @@ controls.autoRotateSpeed = isMobileDevice() ? 2 : 1;
 
 let zoom_in_radius_magnitude = 2;
 let focused_obj = "";
-let zoom_in_duration = 0.8;
-let zoom_out_duration = 0.5;
+let zoom_in_duration = 0.6;
+let zoom_out_duration = 0.7;
 
 //makes a dialogue box
 function showDialogue(event, name) {
