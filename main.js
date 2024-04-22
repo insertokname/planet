@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@v0.149.0/examples/jsm/loaders/GLTFLoader';
 
 let camera_radius = 20;
+let is_dialogue_open = false;
 
 var locations = [
 	[47.07123, 21.944729, "pers1"],
@@ -161,6 +162,7 @@ function showDialogue(event, name) {
 		temp_camera_pos.normalize()
 		gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
 		, { x: temp_camera_pos.x * camera_radius, y: temp_camera_pos.y * camera_radius, z: temp_camera_pos.z * camera_radius, duration: zoom_out_duration })
+		is_dialogue_open = false;
 	};
 
 	// Remove any existing dialogue boxes
@@ -168,6 +170,9 @@ function showDialogue(event, name) {
 	for (var i = 0; i < existingDialogues.length; i++) {
 		container.removeChild(existingDialogues[i]);
 	}
+
+	// We use this so we can t interact while dialogue is open
+	is_dialogue_open = true;
 
 	// Create the dialogue box element
 	var dialogueBox = document.createElement('div');
@@ -252,6 +257,9 @@ window.addEventListener('mousedown', event => {
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
 
+	if (is_dialogue_open == true) {
+		return;
+	}
 	for (let i = 0; i < intersects.length; i++) {
 		if (intersects[i].object.material.locations_index !== undefined) {
 			let elem = locations[intersects[i].object.material.locations_index]
