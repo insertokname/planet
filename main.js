@@ -17,7 +17,7 @@ function isMobileDevice() {
 
 //Scene creation
 const scene = new THREE.Scene();
-scene.add(new THREE.GridHelper(200, 50));
+//scene.add(new THREE.GridHelper(200, 50));
 scene.background = new THREE.Color(0xdddddd);
 
 //Sphere for testing
@@ -266,6 +266,9 @@ window.addEventListener('mousedown', event => {
 	
 			gsap.fromTo(camera.position, { x: camera.position.x, y: camera.position.y, z: camera.position.z }
 			, { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z, duration: zoom_in_duration })
+			break;
+		}
+		else if (intersects[i].object.type != "Grid" && intersects[i].object.type != "GridHelper"){
 			break;
 		}
 	}
