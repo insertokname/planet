@@ -144,7 +144,7 @@ controls.autoRotateSpeed = isMobileDevice() ? 2 : 1;
 
 let zoom_in_radius_magnitude = 2;
 let focused_obj = "";
-let zoom_in_duration = 0.6;
+let zoom_in_duration = 0.7;
 let zoom_out_duration = 0.7;
 
 //makes a dialogue box
@@ -154,6 +154,7 @@ function showDialogue(event, name) {
 	var remove_dialogue = (dialogue) => {
 		container.removeChild(dialogue);
 		controls.autoRotate = true;
+		controls.enableRotate = true;
 		focused_obj = "";
 
 		let temp_camera_pos = new THREE.Vector3(
@@ -268,6 +269,7 @@ window.addEventListener('mousedown', event => {
 			focused_obj = elem[2];
 			showDialogue(event, elem[2]);
 			controls.autoRotate = false;
+			controls.enableRotate = false;
 
 			const targetPosition = new THREE.Vector3
 			(intersects[i].object.position.x * zoom_in_radius_magnitude,
